@@ -1,145 +1,153 @@
 # Gender Pay Gap Analysis (MORG 2014)
 
-> **Note:** This project is an assignment submission for the Data Analysis course at Central European University (CEU).
+> **Note:** This project is an assignment submission for the Data Analysis 2 course at Central European University (CEU).
 
-This project analyzes the gender pay gap using UK labor market microdata (MORG 2014).  
-It combines descriptive visualizations with regression-based analysis to estimate:
+This project analyses the gender pay gap among Elementary and Middle School Teachers using US labor market microdata from the CPS MORG 2014 dataset. It combines descriptive visualisations with OLS regression to estimate:
 
-- **Unconditional pay gap** (raw average difference in pay)
-- **Conditional pay gap** (difference after controlling for key covariates, including education)
+- **Unconditional pay gap** — the raw average difference in hourly wages by gender
+- **Conditional pay gap** — the difference after controlling for education level
 
 ---
 
 ## Project Overview
 
-The analysis explores how hourly wages differ by gender and how much of that difference remains after adjusting for observable characteristics.
+The analysis focuses on three core questions:
 
-Core questions:
-1. What is the raw wage difference between men and women?
-2. How does the gap vary by education level?
-3. How much of the gap persists after conditioning on controls?
+1. What is the raw wage difference between male and female teachers?
+2. How does the gap vary across education levels?
+3. How much of the gap persists after conditioning on education?
 
 ---
 
 ## Repository Structure
 
 ```text
-LICENSE
-data/
-  morg2014.csv
-  README.md
-notebooks/
-  gender-pay-gap-analysis.ipynb
-outputs/
-  conditional_gap_by_education_bar.png
-  conditional_gap_by_education_scatter.png
-  education_by_gender_stacked.png
-  gender_distribution.png
-  log_wage_density_by_gender.png
-  unconditional_regression_fit.png
-report/
-  report.md
+da-gender-pay-gap-analysis/
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── data/
+│   └── README.md               # Data source and download instructions
+├── notebook/
+│   └── gender_pay_gap_analysis.ipynb
+├── outputs/
+│   ├── gender_distribution.png
+│   ├── education_by_gender_stacked.png
+│   ├── log_wage_density_by_gender.png
+│   ├── unconditional_regression_fit.png
+│   ├── conditional_gap_by_education_bar.png
+│   └── conditional_gap_by_education_scatter.png
+└── report/
+    └── report.md
 ```
 
 ---
 
 ## Data
 
-- **Source file**: `data/morg2014.csv`
-- **Data notes**: see `data/README.md`
+The raw dataset is **not included** in this repository due to file size.
 
-> This repository uses a local copy of the dataset. Please check licensing/usage constraints in the data documentation before redistribution.
+- **Dataset:** CPS Earnings, MORG 2014 (`morg2014.csv`)
+- **Source:** https://osf.io/g8p9j/
+- **File path in source:** `raw/morg2014.csv`
+
+To reproduce the analysis, download the file and place it at `data/morg2014.csv` before running the notebook. Full instructions are in `data/README.md`.
 
 ---
 
-## Methods Summary
+## Methods
 
-The notebook in `notebooks/gender-pay-gap-analysis.ipynb` performs:
+The notebook in `notebook/gender_pay_gap_analysis.ipynb` covers:
 
-- Data loading and basic cleaning
-- Gender composition and education composition summaries
-- Wage distribution comparison (log wage density by gender)
-- Unconditional regression/fit for raw wage difference
-- Conditional gap analysis by education level
+- Data loading and cleaning
+- Sample filtering to occupation code 2310 (Elementary and Middle School Teachers)
+- Gender and education composition summaries
+- Log wage distribution comparison by gender
+- OLS regression for the unconditional gender wage gap
+- OLS regression with education dummies and gender-education interaction terms
+- All models use HC3 heteroskedasticity-robust standard errors
 
 ---
 
 ## Key Findings
 
-- In this teacher-only sample ($N=3,791$), women earn about **13.2% less** than men in the unconditional model.
-- After controlling for education (with interaction terms), the baseline female gap remains about **12.5% lower** among college graduates.
-- The gender-gap interaction terms by education are not statistically significant, suggesting the pay gap is broadly similar across education groups.
-- The High School Grad subgroup is a small-sample outlier ($N=31$) and should be interpreted cautiously.
-- Overall, the gap narrows only slightly after conditioning on education, indicating education alone does not explain most of the observed difference.
+- In this teacher sample (N = 3,791), female teachers earn about **13.2% less** than male teachers in the unconditional model.
+- After controlling for education, the baseline gap among college graduates remains around **12.5%** and is highly statistically significant (p < 0.01).
+- All gender-education interaction terms are statistically insignificant, meaning the gap is broadly consistent across education levels.
+- The High School Grad subgroup (N = 31) is a small-sample outlier and should be interpreted with caution.
+- Education alone does not explain most of the observed pay difference.
 
 ---
 
 ## Key Outputs
 
-Generated figures are saved in `outputs/`:
+All figures are saved in `outputs/`:
 
-- `gender_distribution.png` — sample composition by gender
-- `education_by_gender_stacked.png` — education composition split by gender
-- `log_wage_density_by_gender.png` — log wage distribution comparison
-- `unconditional_regression_fit.png` — unconditional pay-gap fit
-- `conditional_gap_by_education_bar.png` — conditional gap by education (bar view)
-- `conditional_gap_by_education_scatter.png` — conditional gap by education (scatter view)
+| File | Description |
+|---|---|
+| `gender_distribution.png` | Sample composition by gender |
+| `education_by_gender_stacked.png` | Education distribution split by gender |
+| `log_wage_density_by_gender.png` | Log wage density comparison by gender |
+| `unconditional_regression_fit.png` | OLS fit for the unconditional gender gap |
+| `conditional_gap_by_education_bar.png` | Conditional gap by education (bar chart) |
+| `conditional_gap_by_education_scatter.png` | Conditional gap by education (scatter) |
 
 ---
 
 ## How to Reproduce
 
-### 1) Clone and enter the project
+### 1. Clone the repository
 
 ```zsh
 git clone https://github.com/zarizachow/da-gender-pay-gap-analysis.git
 cd da-gender-pay-gap-analysis
 ```
 
-### 2) Create and activate a virtual environment (recommended)
+### 2. Download the data
+
+Follow the instructions in `data/README.md` to download `morg2014.csv` and place it in the `data/` folder.
+
+### 3. Set up the environment
 
 ```zsh
 python3 -m venv .venv
 source .venv/bin/activate
-```
-
-### 3) Install pinned dependencies
-
-```zsh
 pip install -r requirements.txt
 ```
 
-### 4) Run the notebook
+### 4. Run the notebook
 
-Open and run all cells in:
-
-- `notebooks/gender-pay-gap-analysis.ipynb`
-
-Outputs will be written to `outputs/`.
+Open and run all cells in `notebook/gender_pay_gap_analysis.ipynb`. Plots will be saved to `outputs/` automatically.
 
 ---
 
 ## Report
 
-A written summary is available at:
-
-- `report/report.md`
+A written summary of the analysis, including regression tables and interpretations, is available at `report/report.md`.
 
 ---
 
 ## Limitations
 
 - Results are observational and not causal.
-- Estimates depend on selected controls and model specification.
-- Unobserved factors (e.g., occupation sorting, firm effects, work history) may still explain part of residual gaps.
+- Unobserved factors such as experience, seniority, and school type are not controlled for.
+- The High School Grad subgroup is too small for reliable estimates.
 
 ---
 
 ## Future Improvements
 
-- Add robust/clustered standard errors where appropriate
-- Extend decomposition (e.g., Oaxaca–Blinder)
+- Extend the analysis using Oaxaca-Blinder decomposition
 - Add confidence intervals to all plotted gap estimates
+- Control for additional covariates such as experience and part-time status
+
+---
+
+## Tools
+
+- Python, pandas, NumPy
+- statsmodels (OLS, HC3 robust standard errors)
+- matplotlib, seaborn
 
 ---
 
